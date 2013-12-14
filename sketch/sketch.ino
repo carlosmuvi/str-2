@@ -1,5 +1,10 @@
 #define TIEMPO_CICLO 100 
-int soundPin = 11;
+int soundPin = ;
+int soundPin = ;
+int buttonPin =  ;
+int ledPin =  ;
+
+int is_muted = 0;
 unsigned long timeOrig;
 
 
@@ -22,11 +27,33 @@ ISR(TIMER1_COMPA_vect)
     }
 }
 
+void mute(){
+  int boton = digitalRead(buttonPin);
+  
+  switch(boton){
+    case HIGH:
+      is_muted = 1;
+      digitalWrite(ledPin, is_muted);
+      break;
+    case LOW:
+      is_muted = 0;
+      digitalWrite(ledPin, is_muted);
+      break;
+  }
+}
+
 void setup ()
 {
     pinMode(soundPin, OUTPUT);
     Serial.begin(115200);
-    timeOrig = millis();    
+
+    timeOrig = millis();
+
+    TCCR1B = _BV(WGM12)| _BV(CS10);
+    TCCR1A = 0;
+    OCR1A=4000;
+
+    TIMSK1= TIMSK1 | _BV(OCIE1A);
 }
 
 void loop ()
