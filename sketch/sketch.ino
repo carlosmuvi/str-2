@@ -1,9 +1,9 @@
-#define SAMPLE_TIME 250 
+#define TIEMPO_CICLO 100 
 int soundPin = 11;
 unsigned long timeOrig;
 
 
-void play_bit() 
+ISR(TIMER1_COMPA_vect)
 {
   static int bitwise = 1;
   static unsigned char data = 0;
@@ -15,14 +15,18 @@ void play_bit()
            data = Serial.read();
         }
     }
-    digitalWrite(soundPin, (data & bitwise) );
+    if (is_muted) {
+        digitalWrite(soundPin, (data & bitwise) );
+    } else {
+        digitalWrite(soundPin, 0 );
+    }
 }
 
 void setup ()
 {
     pinMode(soundPin, OUTPUT);
     Serial.begin(115200);
-    timeOrig = micros();    
+    timeOrig = millis();    
 }
 
 void loop ()
@@ -30,7 +34,7 @@ void loop ()
     unsigned long timeDiff;
 
     play_bit();
-    timeDiff = SAMPLE_TIME - (micros() - timeOrig);
-    timeOrig = timeOrig + SAMPLE_TIME;
-    delayMicroseconds(timeDiff);
+    timeDiff = TIEMPO_CICLO - (millis() - timeOrig);
+    timeOrig = timeOrig + TIEMPO_CICLO;
+    delay(timeDiff);
 }
