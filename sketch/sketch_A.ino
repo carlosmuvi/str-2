@@ -51,7 +51,7 @@ void setup ()
 
     TCCR1B = _BV(WGM12)| _BV(CS10);
     TCCR1A = 0;
-    OCR1A=4000;
+    OCR1A  = 4000;
 
     TIMSK1= TIMSK1 | _BV(OCIE1A);
 }
