@@ -1,8 +1,7 @@
 #define TIEMPO_CICLO 100 
-int soundPin = ;
-int soundPin = ;
-int buttonPin =  ;
-int ledPin =  ;
+int soundPin = 11;
+int buttonPin =  13;
+int ledPin =  7;
 
 int is_muted = 0;
 unsigned long timeOrig;
@@ -45,22 +44,28 @@ void mute(){
 void setup ()
 {
     pinMode(soundPin, OUTPUT);
+    pinMode(ledPin, OUTPUT);
+    pinMode(buttonPin, INPUT);
     Serial.begin(115200);
 
-    timeOrig = millis();
-
+    //TIMER_1
     TCCR1B = _BV(WGM12)| _BV(CS10);
     TCCR1A = 0;
     OCR1A=4000;
-
     TIMSK1= TIMSK1 | _BV(OCIE1A);
+
+    //TIMER_2
+    TCCR2A = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
+    TCCR2B = _BV(CS20);
+
+    timeOrig = millis();
 }
 
 void loop ()
 {
     unsigned long timeDiff;
 
-    play_bit();
+    mute();
     timeDiff = TIEMPO_CICLO - (millis() - timeOrig);
     timeOrig = timeOrig + TIEMPO_CICLO;
     delay(timeDiff);
